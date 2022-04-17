@@ -5,9 +5,9 @@ class CsvToJson
         data = CSV.read(filename, col_sep: ';')
         data.shift
         #tranformar array de array em array de hashs
-        columns = %w[cpf nome_paciente email_paciente data_nascimento_paciente endereço_rua_paciente
-            cidade_paciente estado_patiente crm_médico crm_médico_estado nome_médico email_médico
-            token_resultado_exame data_exame tipo_exame limites_tipo_exame resultado_tipo_exame]
+        columns = %w[cpf name email birthday street_address city_address state_address
+            doctor_crm doctor_crm_state doctor_name doctor_email result_token result_date test_type test_limits result]
+          
         data.map do |row|
             row.each_with_object({}).with_index do |(elem, acc), idx|
                 column_name = columns[idx]

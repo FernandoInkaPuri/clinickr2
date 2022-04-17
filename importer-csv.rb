@@ -4,9 +4,9 @@ require 'byebug'
 
 connection = PG.connect(
   host: 'clinickpg',
-  dbname: 'clinickdb',
-  user: 'clinick',
-  password: 'clinick'
+  dbname: 'postgres',
+  user: 'postgres',
+  password: '123456'
 )
 
 setup_table = %{
