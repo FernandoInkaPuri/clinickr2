@@ -1,6 +1,7 @@
 require 'pg'
 require './csv_to_json'
 require './sidekiq'
+
 class Importer
   def self.call(filename)
     connection = pg_connection
@@ -57,6 +58,6 @@ class Importer
   end
 
   def self.csv_data(filename)
-    OurWorker.perform_async(CsvToJson.call(filename))
+    CsvToJson.call(filename)
   end
 end

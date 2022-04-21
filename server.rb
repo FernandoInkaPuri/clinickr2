@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'pg'
 require './importer'
+require './sidekiq'
 
 configure do
     set port: 3000
@@ -16,8 +17,9 @@ connection = PG.connect(
   
 get '/import/:filename' do
     initial_time = Time.now
-
-    Importer.call(params['filename'])
+    filename = params['filename']
+    OurWorker.perform_async(filename)  
+    #Importer.call(params['filename'])
 
     "Done in #{Time.now - initial_time} seconds"
 end
