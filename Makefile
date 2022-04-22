@@ -17,10 +17,10 @@ psql:
 	docker exec -it clinickpg bash -c "psql -U postgres postgres"
 
 redis.image:
-	docker run --name redis -d -p 6379:6379 --network clinickr -i -t redis:3.2.5-alpine
+	docker run --name redis -d -p 6379:6379 --network clinickr -i -t redis:6-alpine
 	
 sidekiq:
     docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app --network clinickr ruby bash -c "sidekiq -r ./sidekiq.rb"
 
 rackup:
-    docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app --network clinickr ruby bash -c "rackup"
+    docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -p 9292:9292 --network clinickr ruby bash -c "rackup"
