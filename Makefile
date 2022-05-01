@@ -17,10 +17,13 @@ psql:
 	docker exec -it clinickpg bash -c "psql -U postgres postgres"
 
 redis.image:
-	docker run --name redis -d -p 6379:6379 --network clinickr -i -t redis:6-alpine
+	docker run --rm --name redis -d -p 6379:6379 --network clinickr -i -t redis:6-alpine
 	
 sidekiq:
-    docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app --network clinickr ruby bash -c "sidekiq -r ./sidekiq.rb"
+    ## docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app --network clinickr ruby bash -c "sidekiq -r ./sidekiq.rb"
+	docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -e REDIS_URL=redis://redis:6379/0 --network clinickr ruby bash -c "sidekiq -r ./sidekiq.rb"
 
 rackup:
-    docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -p 9292:9292 --network clinickr ruby bash -c "rackup"
+	docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -e REDIS_URL=redis://redis:6379/0 -p 9292:9292 --network clinickr ruby bash -c "rackup --port 9292 --host 0.0.0.0 config.ru" 
+	# docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -e REDIS_URL=redis://redis:6379/0 -p 9292:9292 --network clinickr ruby bash -c "rackup --port 9292 --host 0.0.0.0 sidekiq-web.ru"
+	# Não estava funcionando antes devido a falta do coockie e securerandom, e faltando a especificação --port 9292 --host 0.0.0.0 no comando rackup

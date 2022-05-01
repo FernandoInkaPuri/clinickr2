@@ -1,0 +1,26 @@
+#!/bin/bash
+
+HOME_DIR=/home/ubuntu
+APP_DIR=$HOME_DIR/app 
+
+# prepare app directory
+ssh $1 mkdir -p $APP_DIR
+
+# send files to the server
+echo "Sending files to the server..."
+scp ./prod-sample/server.rb $1:$APP_DIR
+
+# install Ruby gems
+echo "Installing Ruby gems..."
+ssh $1 sudo gem install puma sinatra
+
+#restart the app process
+# echo "Killing current app process..."
+ssh $1 pkill ruby
+echo "Starting a new app process..."
+ssh $1 "ruby app/server.rb -s puma > app/output.log 2>&1 &"
+#ssh $1  "ruby app/server.rb -s puma"
+
+# execute setup script
+#ssh $1 bash $HOME_DIR/configure-docker
+echo "Done"

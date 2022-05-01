@@ -5,6 +5,7 @@ API para consulta de exames
 
 ## API
 
+
 Request
 GET /tests/T906AI
 
