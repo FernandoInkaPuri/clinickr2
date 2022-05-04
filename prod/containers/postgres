@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker run -d --rm --name clinickpg -e POSTGRES_USER=clinick -e POSTGRES_PASSWORD=clinick -e POSTGRES_DB=clinickdb -v clinick_db_data:/var/lib/postgresql/data --network clinickr postgres

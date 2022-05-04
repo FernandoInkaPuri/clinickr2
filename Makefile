@@ -27,3 +27,13 @@ rackup:
 	docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -e REDIS_URL=redis://redis:6379/0 -p 9292:9292 --network clinickr ruby bash -c "rackup --port 9292 --host 0.0.0.0 config.ru" 
 	# docker run -v $(pwd):/app -v rubygems_clinickr:/usr/local/bundle -w /app -e REDIS_URL=redis://redis:6379/0 -p 9292:9292 --network clinickr ruby bash -c "rackup --port 9292 --host 0.0.0.0 sidekiq-web.ru"
 	# Não estava funcionando antes devido a falta do coockie e securerandom, e faltando a especificação --port 9292 --host 0.0.0.0 no comando rackup
+
+prod.setup:
+	#@bash ./prod/setup ${instance}
+	# make prod.setup instance=clinickr
+	./prod/setup clinickr
+
+prod.deploy:
+	#@bash ./prod/deploy ${instance}
+	# make prod.deploy instance=clinickr
+	./prod/deploy clinickr

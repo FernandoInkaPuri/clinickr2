@@ -1,0 +1,38 @@
+#!/bin/bash
+
+HOME_DIR=/home/ubuntu
+
+# prepare directories
+ssh $1 mkdir -p $HOME_DIR/containers
+ssh $1 mkdir -p $HOME_DIR/data
+
+# copy CSV data to the server
+scp ./data/* $1:$HOME_DIR/data/
+
+# create Docker network
+ssh $1 docker network create clinickr
+
+#build app image and save
+echo "Building app image..."
+docker build -t clinickr9 . #--platform linux/amd64
+echo "Saving app image..."
+docker save -o prod/containers/clinickr9.tar clinickr9
+
+# copy containers declaration to the server
+scp ./prod/containers/* $1:$HOME_DIR/containers/
+
+#load app image in the server
+echo "Load app image in the server"
+ssh $1 docker load --input containers/clinickr9.tar
+
+# restart containers
+ssh $1 docker stop clinickr
+ssh $1 docker stop clinickpg
+ssh $1 docker stop redis
+ssh $1 docker stop sidekiq
+ssh $1 docker stop sidekiq-web
+ssh $1 bash $HOME_DIR/containers/postgres
+ssh $1 bash $HOME_DIR/containers/redis
+ssh $1 bash $HOME_DIR/containers/clinickr
+ssh $1 bash $HOME_DIR/containers/sidekiq
+ssh $1 bash $HOME_DIR/containers/sidekiq-web
